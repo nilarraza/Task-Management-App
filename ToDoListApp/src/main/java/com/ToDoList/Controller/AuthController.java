@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,7 +29,6 @@ import com.ToDoList.Util.JwtUtil;
 
 @CrossOrigin
 @RestController
-@EnableScheduling
 @RequestMapping("auth")
 public class AuthController {
 
@@ -61,6 +59,7 @@ public class AuthController {
 	@PostMapping("/signUp")
 	public User saveUser(@RequestBody User user) {
 		user.setRole("USER");
+		//user.setRole("ADMIN");
 		String pass = user.getPassword();
 		String encpass = passwordEncoder.encode(pass);
 		user.setPassword(encpass);

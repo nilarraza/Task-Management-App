@@ -1,5 +1,7 @@
 package com.ToDoList.Controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,17 +29,16 @@ import com.ToDoList.UService.TaskService;
 @EnableScheduling
 @RequestMapping("app")
 public class TaskController {
-	
+
 	@Autowired
 	TaskService taskService;
-	
+
 	@Autowired
 	private TaskRepository taskRepository;
-	
+
 	@Autowired
 	UserRepository userRepository;
 
-	
 	@PostMapping("/createtask")
 	public Task createTask(@RequestBody Task task, Authentication auth) {
 
@@ -83,9 +85,7 @@ public class TaskController {
 		}
 
 	}
-	
-	
-	
+
 	@GetMapping("upcomingtask")
 	public Collection<Task> UpcomingTask() {
 		int userid = currentUserId(null);
@@ -98,7 +98,7 @@ public class TaskController {
 		}
 
 	}
-	
+
 	@GetMapping("pasttask")
 	public Collection<Task> PastTask() {
 		int userid = currentUserId(null);
@@ -111,12 +111,27 @@ public class TaskController {
 		}
 
 	}
-	
+
 	@Scheduled(cron = "0 0 6 * * ?")
 	public void reminder() {
 		System.out.println("Working notify");
 		taskService.NotifyTasks();
 	}
 
+	@DeleteMapping("deletetask")
+	public void deleteTask(int id) {
+		taskRepository.deleteById(id);
+	}
+
+	@PostMapping("movetask")
+	public void movetask(int id, @RequestBody String date) throws ParseException {
+		// System.out.println(date);
+		java.util.Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+		java.sql.Date sqlStartDate = new java.sql.Date(date1.getTime());
+		Task task = taskRepository.findbyid(id);
+		task.setDate(sqlStartDate);
+		taskRepository.save(task);
+
+	}
 
 }

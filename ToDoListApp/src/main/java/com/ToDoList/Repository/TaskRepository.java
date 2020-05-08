@@ -27,5 +27,8 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
 	@Query("select a from Task a where date = :tdate and userId = :userid")
 	List<Task> findByIdandDate(Date tdate,int userid);
+	
+	@Query("select a from Task a where id = :id")
+	Task findbyid(int id);
 
 }
